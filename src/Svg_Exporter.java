@@ -14,39 +14,23 @@ public class Svg_Exporter {
         this.svg_list = svgImporter.svg_list;
         this.path = path;
     }
-    void write(){
-        BufferedWriter writer;
-        FileWriter file;
-        File fileDirectory;
-        String curLine;
-        for (int i = 0; i < svg_list.size(); i++) {
-            try {
-                fileDirectory = new File(path);
-                if (!fileDirectory.exists()) {
-                    fileDirectory.mkdir();
-                }
-                file = new FileWriter(path+"svg_file_"+i+1+".svg");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            writer = new BufferedWriter(file);
-            for (int j = 0; j < svg_list.get(i).size(); j++) {
-               curLine= svg_list.get(i).get(j);
-                try {
-                    writer.write(curLine);
-                    writer.newLine();
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            try {
-                writer.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    void write() {
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Создаём все необходимые родительские каталоги
         }
 
+        for (int i = 0; i < svg_list.size(); i++) {
+            String fileName = path + "svg_file_" + (i + 1) + ".svg";
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+                for (String curLine : svg_list.get(i)) {
+                    writer.write(curLine);
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Ошибка при записи файла: " + fileName, e);
+            }
+        }
     }
+
 }
