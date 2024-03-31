@@ -1,13 +1,12 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Svg_Exporter {
-    private Map<String, List<List<String>>> images = new HashMap<>();
+    private Map<String, List<byte[]>> images = new HashMap<>();
 
     String path;
 
@@ -21,7 +20,7 @@ public class Svg_Exporter {
         String foldeer;
         if (!images.isEmpty()) {
 
-            for (Map.Entry<String, List<List<String>>> entry : images.entrySet()) {
+            for (Map.Entry<String, List<byte[]>> entry : images.entrySet()) {
                 foldeer = entry.getKey();
                 String newPath = path + "/" + foldeer + "/";
                 directory = new File(newPath);
@@ -35,19 +34,25 @@ public class Svg_Exporter {
             System.out.println("No elements!!");
         }
     }
+//TODO переделать для работы с байт кодом листа
+private void imgExporter(List<byte[]> list, String format, String path) {
+    for (int i = 0; i < list.size(); i++) {
 
-    private void imgExporter(List<List<String>> list, String format, String path) {
-        for (int i = 0; i < list.size(); i++) {
-            String fileName = path + format + "_file_" + (i + 1) + "." + format;
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-                for (String curLine : list.get(i)) {
-                    writer.write(curLine);
-                    writer.newLine();
-                }
+            byte[] imageData = list.get(i);
+            try {
+                // Преобразование массива байтов в изображение
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
+
+                // Генерация уникального имени файла
+                String fileName = path + format + "_file_" + (i + 1) + "_" + ( + 1) + "." + format;
+
+                // Сохранение изображения на диск
+                ImageIO.write(image, format, new File(fileName));
             } catch (IOException e) {
-                throw new RuntimeException("Ошибка при записи файла: " + fileName, e);
+                throw new RuntimeException("Ошибка при записи изображения: " + e.getMessage());
             }
-        }
+
     }
+}
 
 }

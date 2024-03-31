@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -9,31 +6,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SvgImporter {
     private FileReader file;
     private boolean isUrl = false;
-    ImageSrc src;
+    private Svg_Exporter export;
+    ImageParser src;
+    URL_Checker url_checker;
+    private int currentPosition = 0;
+    ByteWorker byteWorker;
+    private boolean svgStatus = false;
+    Parser svgParser = new Parser("<svg", "</svg>", true);
     private URLConnection urlConnection = null;
     private URL url = null;
     private boolean pathStatus = false;
-    private final String webUrl;
-    Map<String, List<List<String>>> images = new HashMap<>();
-    private boolean startSvg = false;
-    private boolean startImgClass = false;
-    private List<String> currentObject;
+    private String webUrl;
+    Map<String, List<byte[]>> images = new HashMap<>();
+    String pathOut;
 
     public SvgImporter(FileReader file) {
         this.file = file;
         this.webUrl = null;
-        src = new ImageSrc();
+        src = new ImageParser("<img", "</img>", ">");
     }
 
-    public SvgImporter(String webUrl) {
-        this.webUrl = webUrl;
+    public SvgImporter(String webUrl, String pathOut) {
+        this.webUrl = webUrl.replace('\\', '/');
+        this.webUrl = this.webUrl.charAt(webUrl.length() - 1) == '/' ? webUrl : webUrl + "/";
         this.isUrl = true;
-        src = new ImageSrc();
-
+        url_checker = new URL_Checker(this.webUrl);
+        src = new ImageParser("<img", "</img>", ">");
+        this.pathOut = getAbsolutPath(pathOut);
+        this.byteWorker = new ByteWorker(pathOut);
+        System.out.println(this.pathOut);
         try {
             this.url = new URL(webUrl);
             this.urlConnection = this.url.openConnection();
@@ -44,105 +50,87 @@ public class SvgImporter {
         }
     }
 
+    boolean isSVG(String line) {
+        svgParser.put(line);
+        if (svgParser.doneStatus) {
+            String key = "svg";
+            keyChecker(key);
+            currentPosition = src.currentPosition;
+            line = checkQuotes(isPathStatus(svgParser.pull()));
+            images.get(key).add(line.getBytes());
+        }
+        return svgParser.startStatus;
+    }
+
+
+    public String getAbsolutPath(String pathOut) {
+        String absolutPath;
+        pathOut = pathOut.replace('\\', '/');
+        final String wwww = "www.";
+        final String https = "https://";
+        absolutPath = this.webUrl.startsWith(https) ? this.webUrl.substring(this.webUrl.indexOf(https) + https.length()) : this.webUrl;
+        absolutPath = absolutPath.startsWith(wwww) ? absolutPath.substring(absolutPath.indexOf(wwww) + wwww.length()) : absolutPath;
+        absolutPath = absolutPath.contains("/") ? absolutPath.substring(0, absolutPath.lastIndexOf(".")) : absolutPath;
+        pathOut = pathOut.replace('/', '\\');
+        pathOut = pathOut.charAt(pathOut.length() - 1) == '\\' ? pathOut : pathOut + "\\";
+
+        return pathOut + absolutPath + "\\";
+    }
+
     public void read() throws IOException {
         BufferedReader reader = isUrl ? new BufferedReader(new InputStreamReader(urlConnection.getInputStream())) : new BufferedReader(file);
         String line;
         while ((line = reader.readLine()) != null) {
-            isImage(line);
+            if (line.contains("<svg") || svgStatus) {
+                svgStatus = !isSVG(line);
+            } else {
+                src.put(line);
+            }
         }
         reader.close();
+        List<String> links = src.pull();
+        //Загружаем наши ссылки с те в байт коде, и определяем нагу imagest map
+        downloadLinks(links);
     }
 
-    private void isImage2(String line) {
-        if (!startImgClass && startSvg) {
-            svgCreator(line);
-        } else if (!startImgClass) {
-            startSvg = isSvgStarts(line);
-            if (!startSvg && startImgClass) {
-                if (src.get() == null) {
-                    src.put(line);
-                } else {
-                    executeSrc(src.pull());
-                }
-            } else {
-                startImgClass = src.put(line);
-            }
+    public void write() {
 
-        } else {
-            startImgClass = src.put(line);
+        for (Map.Entry<String, List<byte[]>> entry : images.entrySet()) {
+            String path = this.pathOut.replace('\\', '/') + entry.getKey() + "/";
+            entry.getValue().forEach((x) ->
+                    byteWorker.writer(x, path));
         }
+
+        export = new Svg_Exporter(this, pathOut);
+        export.write();
+        System.out.println("Objects created in:  " + pathOut);
     }
+    private void downloadLinks(List<String> imagesLinks) {
+        //Проверяем все ли ссылки у нас сылки имеют абсолютный путь, если не все ссылки убдут исправленны
+        imagesLinks = imagesLinks.stream().map(url_checker::getAbsolutURl).collect(Collectors.toList());
+        // TODO Убрать строку печати всех ссылко
+        imagesLinks.forEach(System.out::println);
+        byte[] currentList;
+        String key;
 
-    private void isImage(String line) {
-        if (!startImgClass) {
-            if (startSvg) {
-                svgCreator(line);
-            } else {
-                startSvg = isSvgStarts(line);
-            }
-        }
-        if (!startSvg) {
-            if (startImgClass) {
-                if (src.get() == null) {
-                    src.put(line);
-                } else {
-                    executeSrc(src.pull());
-                }
-            } else {
-                startImgClass = src.put(line);
-                if (src.get() != null) {
-                    executeSrc(src.pull());
-                }
-            }
+        for (int i = 0; i < imagesLinks.size(); i++) {
+            key = defineFileFormat(imagesLinks.get(i));
+            currentList = byteWorker.loaderImageFromWeb(imagesLinks.get(i));
+            putInMap(key, currentList);
         }
     }
 
-    private void executeSrc(String src) {
-        if (src != null && !src.isEmpty()) {
-            src = src.startsWith("//www.") ? "https://" + src.substring(2) : src;
-            src = src.startsWith("https://") || src.startsWith("www.") ? src : this.webUrl + src.substring(1);
-            String key = src.substring(src.lastIndexOf(".") + 1);
-            keyChecker(key);
-            currentObject = getListImageAsObject(src);
-            images.get(key).add(currentObject);
-        }
-    }
-
-
-    private boolean isSvgStarts(String line) {
-        final String startSvg = "<svg ";
-        if (line.contains(startSvg)) {
-            currentObject = new ArrayList<>();
-            String key = "svg";
-            keyChecker(key);
-            images.get(key).add(currentObject);
-            svgCreator(line);
-            return true;
-        }
-        return false;
+    private String defineFileFormat(String link) {
+        String fileFormat;
+        fileFormat = link.lastIndexOf('.') < link.length() - 6 ? "webp" : (link.substring(link.lastIndexOf('.') + 1));
+        return fileFormat;
     }
 
     private void keyChecker(String key) {
         images.putIfAbsent(key, new ArrayList<>());
     }
 
-    private void svgCreator(String currentLine) {
-        final String endsSvg = "</svg>";
-        String key = "svg";
-        if (currentLine.contains(endsSvg)) {
-            currentLine = checkQuotes(currentLine);
-            String newLine = currentLine.substring(0, currentLine.indexOf(endsSvg) + endsSvg.length());
-            newLine = isPathStatus(newLine);
-            currentObject.add(newLine);
-            startSvg = false;
-        } else {
-            String newLine = checkQuotes(currentLine);
-            newLine = isPathStatus(newLine);
-            currentObject.add(newLine);
-        }
-    }
-
-    public String isPathStatus(String line) {
+    private String isPathStatus(String line) {
         final String startsPath = "<path";
         final String endsPath = "/>";
         if (pathStatus && line.contains(endsPath)) {
@@ -166,28 +154,12 @@ public class SvgImporter {
         return currentLine;
     }
 
-    private List<String> getListImageAsObject(String webUrl) {
-        System.out.println(webUrl);
-        List<String> svg = new ArrayList<>();
-        try {
-            URL url = new URL(webUrl);
-            URLConnection urlConnection = url.openConnection();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    svg.add(line);
-                }
-            }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Invalid URL: " + webUrl, e);
-        } catch (IOException e) {
-            throw new RuntimeException("I/O Error reading from " + webUrl);
-
-        }
-        return svg;
+    private void putInMap(String key, byte[] byteList) {
+        keyChecker(key);
+        images.get(key).add(byteList);
     }
 
-    public static void main(String[] args) {
-        // Example usage of SvgImporter
+    public void getInfo() {
+        this.images.forEach((key, folder) -> System.out.println(key + ": " + folder.size() + (folder.size() > 1 ? " objects" : "object")));
     }
 }
