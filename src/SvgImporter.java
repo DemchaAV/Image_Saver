@@ -93,15 +93,12 @@ public class SvgImporter {
         }
         reader.close();
         List<String> links = src.pull();
+        System.out.println("Defined " + links.size() + " links!");
         //Загружаем наши ссылки с те в байт коде, и определяем нагу imagest map
         downloadLinks(links);
     }
 
     public void write() {
-        for (Map.Entry<String, List<byte[]>> entry : images.entrySet()) {
-            System.out.println("Files: " + entry.getKey() + " are " + entry.getValue().size());
-        }
-
         for (Map.Entry<String, List<byte[]>> entry : images.entrySet()) {
             String path = this.pathOut.replace('\\', '/') + entry.getKey() + "/";
             System.out.println("Files: " + entry.getKey() + " are " + entry.getValue().size());
@@ -111,7 +108,6 @@ public class SvgImporter {
                 byteWorker.writer(file, path, fileName);
             }
         }
-        System.out.println("Objects created in:  " + pathOut);
     }
     private void downloadLinks(List<String> imagesLinks) {
         //Проверяем все ли ссылки у нас сылки имеют абсолютный путь, если не все ссылки убдут исправленны
@@ -123,6 +119,7 @@ public class SvgImporter {
             key = defineFileFormat(imagesLinks.get(i));
             currentList = byteWorker.loaderImageFromWeb(imagesLinks.get(i));
             putInMap(key, currentList);
+            System.out.println("Link " + imagesLinks.get(i) + " has download");
         }
     }
 
