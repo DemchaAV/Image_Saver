@@ -1,6 +1,8 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +13,9 @@ public class Svg_Exporter {
     String path;
 
 
-    public Svg_Exporter(SvgImporter svgImporter, String outPath) {
+    public Svg_Exporter(SvgImporter svgImporter) {
         this.images = svgImporter.images;
-        this.path = outPath;
+        this.path = svgImporter.pathOut;
     }
     void write() {
         File directory = null;
@@ -28,23 +30,25 @@ public class Svg_Exporter {
                     directory.mkdirs(); // Создаём все необходимые родительские каталоги
 
                 }
-                imgExporter(entry.getValue(), entry.getKey(),newPath);
+                for(byte [] data: entry.getValue()){
+                    imgExporter(data, entry.getKey(),newPath);
+                }
+
             }
         } else {
             System.out.println("No elements!!");
         }
     }
 //TODO переделать для работы с байт кодом листа
-private void imgExporter(List<byte[]> list, String format, String path) {
-    for (int i = 0; i < list.size(); i++) {
+private void imgExporter(byte[] imageData, String format, String path) {
 
-            byte[] imageData = list.get(i);
-            try {
+
+    try {
                 // Преобразование массива байтов в изображение
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
 
                 // Генерация уникального имени файла
-                String fileName = path + format + "_file_" + (i + 1) + "_" + ( + 1) + "." + format;
+        String fileName = path + "image_" + "." + format;
 
                 // Сохранение изображения на диск
                 ImageIO.write(image, format, new File(fileName));
@@ -52,7 +56,7 @@ private void imgExporter(List<byte[]> list, String format, String path) {
                 throw new RuntimeException("Ошибка при записи изображения: " + e.getMessage());
             }
 
-    }
+
 }
 
 }
