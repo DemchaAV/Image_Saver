@@ -63,8 +63,11 @@ public class ImageParser extends BaseParser {
     }
 
     private boolean handingNotStart() {
-        startStatus = contains(starter);
+        if (startStatus = contains(starter)) {
+            currentPosition = indexFrom(starter);
+        }
         if (startStatus) {
+
             return handingStart();
         } else {
             return false;
@@ -157,6 +160,14 @@ class URL_Checker {
         absolutPath =absolutPath.startsWith("/") ?absolutPath.substring(1) : absolutPath;
         absolutPath = absolutPath.startsWith(wwww) ? https + absolutPath : absolutPath;
         absolutPath = absolutPath.startsWith(https) ? absolutPath : webUrl + absolutPath;
+        String imageFormat;
+        if (absolutPath.indexOf(".")< absolutPath.length()-6 ){
+            imageFormat = absolutPath.substring(absolutPath.lastIndexOf('.'));
+            if (absolutPath.substring(0,absolutPath.length()-imageFormat.length()).contains(imageFormat)) {
+                absolutPath = absolutPath.substring(0,absolutPath.length()-imageFormat.length());
+                absolutPath = absolutPath.substring(0,absolutPath.lastIndexOf(imageFormat)+imageFormat.length());
+            }
+        }
 
         return absolutPath;
     }

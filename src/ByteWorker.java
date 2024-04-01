@@ -6,12 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ByteWorker {
-    private String outPath;
-
-    public ByteWorker(String outPath) {
-        this.outPath = outPath;
-    }
-
     public byte[] loaderImageFromWeb(String webUrl) {
         ByteArrayOutputStream buffer;
         try {
@@ -35,22 +29,33 @@ public class ByteWorker {
 
     }
 
-    public void writer(byte[] imgByte,String outPath){
-        System.out.println(outPath);
-        File directory = null;
-        directory = new File(outPath);
+    public void writer(byte[] imgByte, String outPath, String fileName) {
+        // Предположим, что outPath - это путь к каталогу, и мы добавим имя файла для сохранения изображения
+        File directory = new File(outPath);
         if (!directory.exists()) {
             directory.mkdirs(); // Создаём все необходимые родительские каталоги
-
         }
+        File outputFile = new File(directory, fileName); // Создаём объект файла в указанном каталоге с именем fileName
 
-        try (FileOutputStream fos = new FileOutputStream(outPath)) {
-                fos.write(imgByte);
-                System.out.println("Изображение сохранено на диск: downloaded_image" + ( + 1));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
 
+        try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+            fos.write(imgByte);
+            System.out.println("Изображение сохранено на диск: " + outputFile.getAbsolutePath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+
+}
+class Test2{
+    public static void main(String[] args) {
+        ByteWorker worker = new ByteWorker();
+        String directoryPath = "C:\\Users\\Demch\\OneDrive\\Рабочий стол\\amayzon";
+        String fileName = "savedImage.png"; // Имя файла для сохранения
+
+        byte[] imageBytes = worker.loaderImageFromWeb("https://static.wixstatic.com/media/112ad8_86787dc86e1f4be89f0bc3f1d463c79d~mv2.png");
+        worker.writer(imageBytes, directoryPath, fileName);
+    }
 
 }

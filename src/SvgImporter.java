@@ -1,4 +1,7 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -6,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SvgImporter {
@@ -38,8 +43,7 @@ public class SvgImporter {
         url_checker = new URL_Checker(this.webUrl);
         src = new ImageParser("<img", "</img>", ">");
         this.pathOut = getAbsolutPath(pathOut);
-        this.byteWorker = new ByteWorker(pathOut);
-        System.out.println(this.pathOut);
+        this.byteWorker = new ByteWorker();
         try {
             this.url = new URL(webUrl);
             this.urlConnection = this.url.openConnection();
@@ -89,27 +93,25 @@ public class SvgImporter {
         }
         reader.close();
         List<String> links = src.pull();
+        System.out.println("Defined " + links.size() + " links!");
         //Загружаем наши ссылки с те в байт коде, и определяем нагу imagest map
         downloadLinks(links);
     }
 
     public void write() {
-
         for (Map.Entry<String, List<byte[]>> entry : images.entrySet()) {
             String path = this.pathOut.replace('\\', '/') + entry.getKey() + "/";
-            entry.getValue().forEach((x) ->
-                    byteWorker.writer(x, path));
+            System.out.println("Files: " + entry.getKey() + " are " + entry.getValue().size());
+            AtomicInteger number = new AtomicInteger(1);
+            for (byte[] file : entry.getValue()) {
+                String fileName = "img_" + number.getAndIncrement() + "." + entry.getKey();
+                byteWorker.writer(file, path, fileName);
+            }
         }
-
-        export = new Svg_Exporter(this, pathOut);
-        export.write();
-        System.out.println("Objects created in:  " + pathOut);
     }
     private void downloadLinks(List<String> imagesLinks) {
         //Проверяем все ли ссылки у нас сылки имеют абсолютный путь, если не все ссылки убдут исправленны
         imagesLinks = imagesLinks.stream().map(url_checker::getAbsolutURl).collect(Collectors.toList());
-        // TODO Убрать строку печати всех ссылко
-        imagesLinks.forEach(System.out::println);
         byte[] currentList;
         String key;
 
@@ -117,6 +119,7 @@ public class SvgImporter {
             key = defineFileFormat(imagesLinks.get(i));
             currentList = byteWorker.loaderImageFromWeb(imagesLinks.get(i));
             putInMap(key, currentList);
+            System.out.println("Link " + imagesLinks.get(i) + " has download");
         }
     }
 

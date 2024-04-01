@@ -6,9 +6,9 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         FileReader fileReader;
         long startTime = System.currentTimeMillis();
-        String url = "https://www.amayzon.co/";
-        String path = "C:/Users/Demch/OneDrive/Рабочий стол/";
-        SvgImporter svg = new SvgImporter(url, path);
+        String url = "https://developers.google.com/";
+        String outPath = "C:/Users/Demch/OneDrive/Рабочий стол/";
+        SvgImporter svg = new SvgImporter(url, outPath);
         try {
             svg.read();
         } catch (IOException e) {
@@ -16,7 +16,6 @@ public class Main {
         }
         svg.getInfo();
         svg.write();
-//        System.out.println("Created " + svg.images.size() + (svg.getSvg_list().size() > 1 ? " an objects" : " object"));
         double spentTime = (double) (System.currentTimeMillis() - startTime) / 1000;
         String second = spentTime > 2 ? " seconds" : " second";
         System.out.println("Processing time: " + spentTime + second);
