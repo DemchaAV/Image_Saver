@@ -30,12 +30,11 @@ public class ByteWorker {
     }
 
     public void writer(byte[] imgByte, String outPath, String fileName) {
-        // Предположим, что outPath - это путь к каталогу, и мы добавим имя файла для сохранения изображения
         File directory = new File(outPath);
         if (!directory.exists()) {
-            directory.mkdirs(); // Создаём все необходимые родительские каталоги
+            directory.mkdirs();
         }
-        File outputFile = new File(directory, fileName); // Создаём объект файла в указанном каталоге с именем fileName
+        File outputFile = new File(directory, fileName);
 
 
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
