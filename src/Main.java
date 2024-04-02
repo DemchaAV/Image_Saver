@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        FileReader fileReader;
         long startTime = System.currentTimeMillis();
         String url = "https://www.microsoft.com/";
         String outPath = "C:/Users/Demch/OneDrive/Рабочий стол";
