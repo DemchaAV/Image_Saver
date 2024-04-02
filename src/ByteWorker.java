@@ -48,14 +48,3 @@ public class ByteWorker {
 
 
 }
-class Test2{
-    public static void main(String[] args) {
-        ByteWorker worker = new ByteWorker();
-        String directoryPath = "C:\\Users\\Demch\\OneDrive\\Рабочий стол\\amayzon";
-        String fileName = "savedImage.png"; // Имя файла для сохранения
-
-        byte[] imageBytes = worker.loaderImageFromWeb("https://static.wixstatic.com/media/112ad8_86787dc86e1f4be89f0bc3f1d463c79d~mv2.png");
-        worker.writer(imageBytes, directoryPath, fileName);
-    }
-
-}

@@ -17,7 +17,6 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        svg.getInfo();
         svg.write();
         double spentTime = (double) (System.currentTimeMillis() - startTime) / 1000;
         String second = spentTime > 2 ? " seconds" : " second";

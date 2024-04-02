@@ -1,3 +1,7 @@
+import parsel.ImageParser;
+import parsel.MultiParser;
+import parsel.URL_Checker;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

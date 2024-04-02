@@ -1,3 +1,5 @@
+package parsel;
+
 abstract class BaseParser {
     public String line;
     protected int currentPosition = 0;
