@@ -40,7 +40,7 @@ public class ByteWorker {
 
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
             fos.write(imgByte);
-            System.out.println("Изображение сохранено на диск: " + outputFile.getAbsolutePath());
+            System.out.println("The image is saved to disc: " + outputFile.getAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

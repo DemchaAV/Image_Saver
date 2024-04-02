@@ -1,9 +1,9 @@
 package parsel;
 
 /**
- * этот клас для проверки вашего адресса если она имеет обрезанную форму с страници обрабатываемой дополняет
- * вашу ссылку
- */
+ * this class to check your address if it has a truncated form with the pages of the processed supplement
+ * your reference
+ * */
 public class URL_Checker {
     private static String webUrl;
 

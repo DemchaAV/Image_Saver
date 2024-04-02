@@ -39,21 +39,17 @@ public class Svg_Exporter {
             System.out.println("No elements!!");
         }
     }
-//TODO переделать для работы с байт кодом листа
+
+    //TODO convert to work with sheet byte code
 private void imgExporter(byte[] imageData, String format, String path) {
 
 
     try {
-                // Преобразование массива байтов в изображение
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageData));
-
-                // Генерация уникального имени файла
         String fileName = path + "image_" + "." + format;
-
-                // Сохранение изображения на диск
                 ImageIO.write(image, format, new File(fileName));
             } catch (IOException e) {
-                throw new RuntimeException("Ошибка при записи изображения: " + e.getMessage());
+        throw new RuntimeException("Error while recording an image: " + e.getMessage());
             }
 
 

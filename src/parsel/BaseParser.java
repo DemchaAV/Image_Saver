@@ -17,33 +17,33 @@ abstract class BaseParser {
     }
 
     /**
-     * Это входной метод для запуски нашего класса и вычесления, и определения наших ссылок
+     * This is the input method to run our class and calculate and define our references
      * src
      *
-     * @param line входные данный для работы нашего класса
-     * @return возращает true если обнаружен img класс и false если клас был закрыт ">"
+     * @param line input given to run our class
+     * @return returns true if img class is detected and false if the class was closed ">"
      */
     public boolean put(String line) {
         return put(0, line);
     }
 
     /**
-     * метод для работы с текущей позиции
+     * method for working from the current position
      *
-     * @param line            - обрабатываемая линия
-     * @param currentPosition - текущая позиция
-     * @return возращает выполняемый implement метод execute
+     * @param line - line to be processed
+     * @param currentPosition - current position
+     * @return returns the execute method to be executed
      */
     public boolean put(String line, int currentPosition) {
         return put(currentPosition, line);
     }
 
     /**
-     * метод для работы с текущей позиции
+     * method for working from the current position
      *
-     * @param line            - обрабатываемая линия
-     * @param currentPosition - текущая позиция
-     * @return возращает выполняемый implement метод execute
+     * @param line - line to be processed
+     * @param currentPosition - current position
+     * @return returns the execute method to be executed
      */
     public boolean put(int currentPosition, String line) {
         if (currentPosition == -1 || line == null || currentPosition >= line.length()) {
@@ -60,20 +60,20 @@ abstract class BaseParser {
     }
 
     /**
-     * Мтод относиться к Entery методу put который при переопределению данный выполняет
-     * обработку условий
+     * Mtod refers to Entery method put which, when overridden, performs
+     * condition handling
      *
-     * @return возвращейт true если метод нашел и полностью определил нашу искомый блок
+     * @return returns true if the method has found and fully defined our sought block
      */
     abstract public boolean execute();
 
     /**
-     * Метода ищет совпадение нашей строки  искомого елемента с текущей позиции в загруженой строки класса с помощью метода
-     * put, зачение будет за искомым эелементо тоесть  элемент indexOf = "как"
-     * строка line = "Привет как дела!" значемение return в даном слущаи будет 10 сразу после слова "как"
+     * method searches for a match of our string of the searched element with the current position in the loaded class string using the method
+     * put, the value will be after the searched element i.e. indexOf element = "as"
+     * line line = "Hi how are you!" the return value in this case will be 10 right after the word "as".
      *
-     * @param indexOf - элемент за которым мы хотим узнать индекс
-     * @return елси элемент отсутствует в нашей line может вернуть  отризательное значение -1;
+     * @param indexOf - element for which we want to know the index
+     * @return if the element is missing in our line can return the value -1;
      */
     int indexFrom(String indexOf) {
         if (line.indexOf(indexOf, currentPosition) == -1) {
@@ -83,7 +83,7 @@ abstract class BaseParser {
     }
 
     /**
-     * Возращает нам линию с тикущей позицией обработки в строке
+     * Returns us the line with the ticking position of the processing in the string
      *
      * @return
      */
@@ -96,7 +96,7 @@ abstract class BaseParser {
     }
 
     /**
-     * перед запуском следуюет забрать текущее положения в строки
+     * before startup it is necessary to get the current position in strings
      *
      * @ getCurrentPosition();
      */
@@ -112,11 +112,11 @@ abstract class BaseParser {
     }
 
     /**
-     * метод принимает искомый аргумент в качестве String и возращает tue если он присутствует
-     * в обрабатываемой строке с текущей позиции
+     * method accepts the searched argument as String and returns tue if it is present
+     * in the processed string from the current position
      *
      * @param str
-     * @return true если присутствуе false  в противном случаи
+     * @return true if present false otherwise
      */
     protected boolean contains(String str) {
         return getLine().contains(str);

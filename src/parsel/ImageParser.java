@@ -22,12 +22,12 @@ public class ImageParser extends BaseParser {
     }
 
     /**
-     * Используем данный конструктор если закрывающий трек может варироваться нескольких видов
+     * We use this constructor if the closing track can be warehoused by several types
      *
-     * @param starter    открывающий тег
-     * @param ender      зкрывающий трек например полный
-     * @param enderShort закрывающий тег например короткий
-     *                   Внутринний парсер с стандартным started ender
+     * @param starter opening tag
+     * @param ender trekking track for example full
+     * @param enderShort closing tag for example short
+     *   In-line parser with standard started ender
      */
     public ImageParser(String starter, String ender, String enderShort) {
         super(starter, ender);
@@ -36,12 +36,12 @@ public class ImageParser extends BaseParser {
     }
 
     /**
-     * Используем данный конструктор если закрывающий трек может варироваться нескольких видов
+     * We use this constructor if the closing track can be warehoused by several types
      *
-     * @param starter    открывающий тег
-     * @param ender      зкрывающий трек например полный
-     * @param enderShort закрывающий тег например короткий
-     * @param parser     Внутринний парсер если мы хотим парсить внутри блока image
+     * @param starter opening tag
+     * @param ender trekking track for example full
+     * @param enderShort closing tag for example short
+     * @param parser Internal parser if we want to par inside image block
      */
     public ImageParser(String starter, String ender, String enderShort, Parser parser) {
         super(starter, ender);
@@ -91,8 +91,8 @@ public class ImageParser extends BaseParser {
     }
 
     /**
-     * данный метод при наличии ссылку
-     * src добавляет в наш список ссылк, так же сбрасывает текущие состояние нашей src = null;
+     * this method if there is a reference
+     * src adds a link to our list, resets the current state of our src = null;
      */
     private void addSrc(String src) {
         if (srcList == null) {
@@ -104,9 +104,9 @@ public class ImageParser extends BaseParser {
     }
 
     /**
-     * Данный метод в отличии от метода pull возращает нам данные нашиш ссылок src если они
-     * существую, так же null если класс не завершил свою работу над строкой не дойдя до конца, или
-     * при работе не было найдена ссылка
+     * This method, unlike the pull method, returns the data of our src references if they
+     * exist, as well as null if the class did not finish its work on the string before reaching the end, or
+     * the reference was not found during the work
      *
      * @return
      */
@@ -118,9 +118,9 @@ public class ImageParser extends BaseParser {
     }
 
     /**
-     * Метод который возращает наши искомы ссылки src если они существуют, может вернуть null если
-     * ссылки не найденны или программа не дошла до конца нашей строки, а так же
-     * сбрасывает все данный до исходного состояния для последущей работы над новой строкой
+     * Method that returns our src references if they exist, may return null if
+     * references are not found or the programme has not reached the end of our line, and also
+     * resets all the given references to the initial state for further work on a new line.
      *
      * @return
      */

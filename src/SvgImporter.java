@@ -162,7 +162,4 @@ public class SvgImporter {
         images.get(key).add(byteList);
     }
 
-    public void getInfo() {
-        this.images.forEach((key, folder) -> System.out.println(key + ": " + folder.size() + (folder.size() > 1 ? " objects" : "object")));
-    }
 }

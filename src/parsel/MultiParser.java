@@ -3,10 +3,13 @@ package parsel;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is the same as Parser, but it provides all a coincidence, and out put we will have a list with
+ */
 public class MultiParser {
+    //private
     private List<String> parsList;
     private Parser parser;
-    private int lineSize;
     private boolean doneStatus = false;
 
     public MultiParser(Parser parser) {
