@@ -5,6 +5,13 @@ public class Parser extends BaseParser {
     private String src;
     private boolean wrap = false;
 
+    /**
+     * This class provide parser  enter method is put, has to different types, with starter position, and enter line and without
+     *
+     * @param starter -  how our parts starts
+     * @param ender   - String element how our pars should finish
+     * @param wrap    - if you want you starter and ender in your out
+     */
     public Parser(String starter, String ender, boolean wrap) {
         super(starter, ender);
         this.wrap = wrap;
@@ -24,6 +31,7 @@ public class Parser extends BaseParser {
                 parserStart();
                 return doneStatus;
             } else {
+                currentPosition = -1;
                 return doneStatus;
             }
         }

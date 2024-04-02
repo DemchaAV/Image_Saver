@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ public class SvgImporter {
     private int currentPosition = 0;
     ByteWorker byteWorker;
     private boolean svgStatus = false;
-    Parser svgParser = new Parser("<svg", "</svg>", true);
+    MultiParser svgParse = new MultiParser("<svg", "</svg>", true);
     private URLConnection urlConnection = null;
     private URL url = null;
     private boolean pathStatus = false;
@@ -54,18 +53,6 @@ public class SvgImporter {
         }
     }
 
-    boolean isSVG(String line) {
-        svgParser.put(line);
-        if (svgParser.doneStatus) {
-            String key = "svg";
-            keyChecker(key);
-            currentPosition = src.currentPosition;
-            line = checkQuotes(isPathStatus(svgParser.pull()));
-            images.get(key).add(line.getBytes());
-        }
-        return svgParser.startStatus;
-    }
-
 
     public String getAbsolutPath(String pathOut) {
         String absolutPath;
@@ -86,14 +73,17 @@ public class SvgImporter {
         String line;
         while ((line = reader.readLine()) != null) {
             if (line.contains("<svg") || svgStatus) {
-                svgStatus = !isSVG(line);
+                svgStatus = svgParse.put(line);
+                setSvg(svgParse.pull().stream().map(this::checkQuotes).map(this::pathStatus).collect(Collectors.toList()));
+                src.put(line);
             } else {
                 src.put(line);
             }
         }
         reader.close();
         List<String> links = src.pull();
-        System.out.println("Defined " + links.size() + " links!");
+        int num = images.get("svg") != null ? images.get("svg").size() : 0;
+        System.out.println("Defined " + (links.size() + num) + " objects!");
         //Загружаем наши ссылки с те в байт коде, и определяем нагу imagest map
         downloadLinks(links);
     }
@@ -123,6 +113,12 @@ public class SvgImporter {
         }
     }
 
+    private void setSvg(List<String> listSvg) {
+        for (int i = 0; i < listSvg.size(); i++) {
+            putInMap("svg", listSvg.get(i).getBytes());
+        }
+    }
+
     private String defineFileFormat(String link) {
         String fileFormat;
         fileFormat = link.lastIndexOf('.') < link.length() - 6 ? "webp" : (link.substring(link.lastIndexOf('.') + 1));
@@ -133,7 +129,7 @@ public class SvgImporter {
         images.putIfAbsent(key, new ArrayList<>());
     }
 
-    private String isPathStatus(String line) {
+    private String pathStatus(String line) {
         final String startsPath = "<path";
         final String endsPath = "/>";
         if (pathStatus && line.contains(endsPath)) {
