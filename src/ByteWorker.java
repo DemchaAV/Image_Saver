@@ -30,32 +30,20 @@ public class ByteWorker {
     }
 
     public void writer(byte[] imgByte, String outPath, String fileName) {
-        // Предположим, что outPath - это путь к каталогу, и мы добавим имя файла для сохранения изображения
         File directory = new File(outPath);
         if (!directory.exists()) {
-            directory.mkdirs(); // Создаём все необходимые родительские каталоги
+            directory.mkdirs();
         }
-        File outputFile = new File(directory, fileName); // Создаём объект файла в указанном каталоге с именем fileName
+        File outputFile = new File(directory, fileName);
 
 
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
             fos.write(imgByte);
-            System.out.println("Изображение сохранено на диск: " + outputFile.getAbsolutePath());
+            System.out.println("The image is saved to disc: " + outputFile.getAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-
-}
-class Test2{
-    public static void main(String[] args) {
-        ByteWorker worker = new ByteWorker();
-        String directoryPath = "C:\\Users\\Demch\\OneDrive\\Рабочий стол\\amayzon";
-        String fileName = "savedImage.png"; // Имя файла для сохранения
-
-        byte[] imageBytes = worker.loaderImageFromWeb("https://static.wixstatic.com/media/112ad8_86787dc86e1f4be89f0bc3f1d463c79d~mv2.png");
-        worker.writer(imageBytes, directoryPath, fileName);
-    }
 
 }

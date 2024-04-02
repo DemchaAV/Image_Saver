@@ -1,10 +1,21 @@
-import java.util.ArrayList;
-import java.util.List;
+package parsel;
+
+import parsel.BaseParser;
 
 public class Parser extends BaseParser {
     private String src;
     private boolean wrap = false;
 
+    /**
+     * This class provide parser which can defined the first passage in line. The enter method is put, has
+     * to different types, with starter position and enter line, and without
+     * @param starter -  how our parts starts
+     * @param ender   - String element how our pars should finish
+     * @param wrap    - if you want starter and ender in your out for example
+     *                new Parser("start","finish",true)
+     *                inPut "I start this game and will finish in an hour!"
+     *                outPut "start this game and will finish"
+     */
     public Parser(String starter, String ender, boolean wrap) {
         super(starter, ender);
         this.wrap = wrap;
@@ -24,15 +35,16 @@ public class Parser extends BaseParser {
                 parserStart();
                 return doneStatus;
             } else {
+                currentPosition = -1;
                 return doneStatus;
             }
         }
     }
 
     /**
-     * Определяет нашу стартовую точку для определения src
-     * или ищет концовку если если стартовая точка была определена
-     * если при вызове метода e у нас не был старт статус, или не  метода не срабатывает
+     * Determines our starting point for src definition
+     * or searches for the end if a start point has been defined
+     * if we did not have a start status when calling method e, or the method fails
      */
     private void parserStart() {
         if (!startStatus && !contains(starter)) {
@@ -50,7 +62,7 @@ public class Parser extends BaseParser {
     }
 
     /**
-     * определяем окончание нашего src если он был предварительно найден, и
+     * determine the termination of our src if it was previously found, and
      *
      * @return
      */
