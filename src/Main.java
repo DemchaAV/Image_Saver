@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         FileReader fileReader;
         long startTime = System.currentTimeMillis();
-        String url = "https://www.amayzon.co/";
+        String url = "https://www.microsoft.com/";
         String outPath = "C:/Users/Demch/OneDrive/Рабочий стол";
         SvgImporter svg = new SvgImporter(url, outPath);
         try {
@@ -22,7 +22,6 @@ public class Main {
         double spentTime = (double) (System.currentTimeMillis() - startTime) / 1000;
         String second = spentTime > 2 ? " seconds" : " second";
         System.out.println("Processing time: " + spentTime + second);
-
     }
 }
 
