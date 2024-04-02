@@ -37,6 +37,7 @@ public class ByteWorker {
         File outputFile = new File(directory, fileName);
 
 
+
         try (FileOutputStream fos = new FileOutputStream(outputFile)) {
             fos.write(imgByte);
             System.out.println("The image is saved to disc: " + outputFile.getAbsolutePath());
