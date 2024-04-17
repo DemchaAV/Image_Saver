@@ -1,1 +1,1 @@
-This API provide way to seva images ffrom the websites, includen SVG in the body code
+This API provides a way to save images from websites, including SVG in the body code.
