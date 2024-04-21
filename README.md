@@ -1,1 +1,2 @@
-This API provides a way to save images from websites, including SVG in the body code.
+API provides opportune to download all images from website, including svg code in body HTML.
+This API also can be used with minor modified for parses code through the class Parser or MultiParser, and easily processing  the interest bloc of code for farther modifications.
