@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Svg_Exporter {
+public class Image_Exporter {
     private Map<String, List<byte[]>> images = new HashMap<>();
 
     String path;
 
 
-    public Svg_Exporter(SvgImporter svgImporter) {
-        this.images = svgImporter.images;
-        this.path = svgImporter.pathOut;
+    public Image_Exporter(Images_Importer imagesImporter) {
+        this.images = imagesImporter.images;
+        this.path = imagesImporter.pathOut;
     }
     void write() {
         File directory = null;

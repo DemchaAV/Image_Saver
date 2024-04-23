@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class SvgImporter {
+public class Images_Importer {
     private FileReader file;
     private boolean isUrl = false;
-    private Svg_Exporter export;
+    private Image_Exporter export;
     ImageParser src;
     URL_Checker url_checker;
     private int currentPosition = 0;
@@ -33,13 +33,13 @@ public class SvgImporter {
     Map<String, List<byte[]>> images = new HashMap<>();
     String pathOut;
 
-    public SvgImporter(FileReader file) {
+    public Images_Importer(FileReader file) {
         this.file = file;
         this.webUrl = null;
         src = new ImageParser("<img", "</img>", ">");
     }
 
-    public SvgImporter(String webUrl, String pathOut) {
+    public Images_Importer(String webUrl, String pathOut) {
         this.webUrl = webUrl.replace('\\', '/');
         this.webUrl = this.webUrl.charAt(webUrl.length() - 1) == '/' ? webUrl : webUrl + "/";
         this.isUrl = true;
