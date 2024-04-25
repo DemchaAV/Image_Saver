@@ -2,7 +2,7 @@ package imageIO;
 
 import parsel.ImageParser;
 import parsel.MultiParser;
-import parsel.URL_Checker;
+import parsel.URL_Corrector;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,7 +23,7 @@ public class Images_Importer {
     private boolean isUrl = false;
     private Image_Exporter export;
     ImageParser src;
-    URL_Checker url_checker;
+    URL_Corrector url_corrector;
     private int currentPosition = 0;
     ByteWorker byteWorker;
     private boolean svgStatus = false;
@@ -45,7 +45,7 @@ public class Images_Importer {
         this.webUrl = webUrl.replace('\\', '/');
         this.webUrl = this.webUrl.charAt(webUrl.length() - 1) == '/' ? webUrl : webUrl + "/";
         this.isUrl = true;
-        url_checker = new URL_Checker(this.webUrl);
+        url_corrector = new URL_Corrector(this.webUrl);
         src = new ImageParser("<img", "</img>", ">");
         this.pathOut = getAbsolutPath(pathOut);
         this.byteWorker = new ByteWorker();
@@ -107,7 +107,7 @@ public class Images_Importer {
     }
     private void downloadLinks(List<String> imagesLinks) {
         //Проверяем все ли ссылки у нас сылки имеют абсолютный путь, если не все ссылки убдут исправленны
-        imagesLinks = imagesLinks.stream().map(url_checker::getAbsolutURl).collect(Collectors.toList());
+        imagesLinks = imagesLinks.stream().map(url_corrector::getAbsolutURl).collect(Collectors.toList());
         byte[] currentList;
         String key;
 

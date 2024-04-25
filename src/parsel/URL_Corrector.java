@@ -4,10 +4,10 @@ package parsel;
  * this class to check your address if it has a truncated form with the pages of the processed supplement
  * your reference
  * */
-public class URL_Checker {
+public class URL_Corrector {
     private static String webUrl;
 
-    public URL_Checker(String webUrl) {
+    public URL_Corrector(String webUrl) {
         this.webUrl = webUrl;
     }
 
