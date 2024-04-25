@@ -1,3 +1,5 @@
+package imageIO;
+
 import parsel.ImageParser;
 import parsel.MultiParser;
 import parsel.URL_Checker;
